@@ -1,0 +1,34 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Debug Poker",
+        "type": "cppdbg",
+        "request": "launch",
+  
+        // The program to debug (your Makefile target)
+        "program": "${workspaceFolder}/poker",
+        "args": [],
+  
+        "stopAtEntry": false,
+        "cwd": "${workspaceFolder}",
+        "environment": [],
+        "externalConsole": false,
+  
+        // Build with 'make' before debugging
+        "preLaunchTask": "make",
+  
+        "MIMode": "gdb",
+        "miDebuggerPath": "/usr/bin/gdb",
+  
+        "setupCommands": [
+          {
+            "description": "Enable pretty-printing for STL types",
+            "text": "-enable-pretty-printing",
+            "ignoreFailures": true
+          }
+        ]
+      }
+    ]
+  }
+  
