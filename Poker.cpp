@@ -479,28 +479,56 @@ void PokerGame::Preflop() {
 } 
 
 void PokerGame::BettingStreet() {
-    lastRaiserIdx = 0;
+    lastRaiserIdx = (street == Street::PREFLOP) ? 2 : 0;
     BettingRound();
 }
 
 void PokerGame::Showdown() {
-    vector<int> tempKickerVec;
-    pair<int, HandStrength> winner = pair<int, HandStrength>(-1, HandStrength(HandType::HIGH_CARD, tempKickerVec));
-    for(size_t i = 0; i < players.size(); i++) {
-        if(players[i].GetIsActive()) {
-            if(winner.first == -1) {
-                winner = pair<int, HandStrength>(i, GetBestHand(board, players[i].GetHand()));
-            }
-            else {
-                winner = DetermineWinningHand(board, winner.first, players[winner.first].GetHand(), i, players[i].GetHand());
-            }
+    vector<int> winnerVec;
+    HandStrength bestHandStrength;
+    bool firstLoop = true;
+
+    for(size_t i = 0; i  < players.size(); i++) {
+        if(!players[i].GetIsActive()) {
+            continue;
         }
+
+        HandStrength tempStrength = GetBestHand(board, players[i].GetHand());
+
+        if(firstLoop) {
+            bestHandStrength = tempStrength;
+            winnerVec = { (int)i };
+            firstLoop = false;
+        }
+        else if(bestHandStrength < tempStrength) {
+            bestHandStrength = tempStrength;
+            winnerVec = { (int)i };
+        }
+        else if(bestHandStrength == tempStrength) {
+            winnerVec.push_back((int)i);
+        }
+        //else
+            //leave winnerVec same
     }
 
-    cout << "Winner is: " << players[winner.first].GetName() << endl;
-    cout << "Hand type: " << HandTypeToString(winner.second.type) << endl;
+    if(winnerVec.size() == (int)1) {
+        cout << "Winner is: " << players[winnerVec[0]].GetName() << endl;
+    }
+    else {
+        cout << "Winners are: " << endl;
+        for(size_t i = 0; i < winnerVec.size(); i++) {
+            cout << "\t" << players[winnerVec[0]].GetName() << endl;
+        }
+    }
+    cout << "Hand type: " << HandTypeToString(bestHandStrength.type) << endl;
 
-    players[winner.first].SetStackSize(players[winner.first].GetStackSize() + pot);
+    int chopPotToWin = pot / (int)winnerVec.size();;
+    int chopPotLeftover = pot % (int)winnerVec.size();;
+    for(size_t i = 0; i < winnerVec.size(); i++) {
+        int toWin = chopPotToWin + ((int)i < chopPotLeftover ? 1 : 0);
+        players[winnerVec[(int)i]].AddToStack(toWin);
+    }
+
     street = NextStreet(street);
 
     PrintBreakLine();

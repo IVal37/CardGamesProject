@@ -39,7 +39,8 @@ enum class Action {
     CHECK,
     CALL,
     BET,
-    RAISE
+    RAISE,
+    ALL_IN
 };
 
 string ActionToString(Action a);
@@ -84,7 +85,8 @@ struct HandStrength {
   HandType type = HandType::HIGH_CARD;
   vector<int> kickers;
 
-  // Constructor
+  // Constructors
+  HandStrength() {}
   HandStrength(HandType inputType, vector<int> inputKickers): type(inputType), kickers(inputKickers) {}
 
   // operator overloading
@@ -93,6 +95,14 @@ struct HandStrength {
       return type < other.type;
     }
     return kickers < other.kickers;
+  }
+
+  bool operator==(HandStrength const &other) {
+    return type == other.type && kickers == other.kickers;
+  }
+
+  bool operator!=(HandStrength const &other) {
+    return !(*this == other);
   }
 };
 

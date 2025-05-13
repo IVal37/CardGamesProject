@@ -54,6 +54,8 @@ string ActionToString(Action a) {
             return "BET";
         case Action::RAISE:
             return "RAISE";
+        case Action::ALL_IN:
+            return "ALL_IN";
         default:
             exit(-1);
     }

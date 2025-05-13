@@ -16,11 +16,17 @@ void Player::ResetNextStreet() {
 void Player::ResetNextRound() {
     ResetNextStreet();
 
+    isAllIn = false;
+
     hand.clear();
 }
 
 bool Player::CanAct() {
     return isActive && !isAllIn;
+}
+
+void Player::AddToStack(int addOn) {
+    stackSize += addOn;
 }
 
 // Game Funcs
@@ -144,6 +150,9 @@ void Player::PerformAction(Decision userDecision) {
     else {
         currentBet += userDecision.amount;
         stackSize -= userDecision.amount;
+        if(stackSize == 0) {
+            isAllIn = true;
+        }
     }
 }
 

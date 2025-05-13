@@ -17,6 +17,7 @@ class Player {
         void ResetNextStreet();
         void ResetNextRound();
         bool CanAct();
+        void AddToStack(int addOn);
 
         // Game funcs
         void DealHand(Deck& currDeck, int numCards);
