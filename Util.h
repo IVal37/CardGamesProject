@@ -20,7 +20,6 @@ using namespace std;
 // Street enum
 
 enum class Street {
-  PREROUND,
   PREFLOP,
   FLOP,
   TURN,

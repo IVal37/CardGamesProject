@@ -445,7 +445,7 @@ void PokerGame::StartRound() {
         player.SetIsActive(true);
     }
 
-    street = Street::PREROUND;
+    street = Street::PREFLOP;
     do {
         ResetStreet();
         StartStreet();
@@ -455,25 +455,29 @@ void PokerGame::StartRound() {
 }
 
 void PokerGame::StartStreet() {
-    if(street != Street::PREROUND) {
-        ClearScreen();
-        if(street != Street::SHOWDOWN) {
-            // deal street
-            DealStreet(NumToDeal());
-            // print street name at top
-            cout << StreetToString(street) << "  ";
+    ClearScreen();
+    if(street != Street::SHOWDOWN) {
+        // deal street
+        DealStreet(NumToDeal());
+        // print street name at top
+        cout << StreetToString(street) << " ";
+        if(street != Street::PREFLOP) {
             // { board }  [ pot ]
             PrintBoardPot(board, pot);
-            cout << endl;
-            // ------
-            PrintBreakLine();
-            // Player (x): (name)(hand)
-            PrintPlayersInfo(true);
-            // ------
-            PrintBreakLine();
-            // wait for user to press enter
-            UserPauseClear();
         }
+        else {
+            // (Hand n)
+            cout << "(Hand " << handsPlayed << ")";
+        }
+        cout << endl;
+        // ------
+        PrintBreakLine();
+        // Player (x)[position]: (name) [(hand)] (stack)
+        PrintPlayersInfo(street != Street::PREFLOP);
+        // ------
+        PrintBreakLine();
+        // wait for user to press enter
+        UserPauseClear();
     }
     // execute street
     RoundAction(street);
@@ -481,9 +485,6 @@ void PokerGame::StartStreet() {
 
 void PokerGame::RoundAction(Street s) {
     switch(s) {
-        case Street::PREROUND:
-            PreRound(handsPlayed);
-            break;
         case Street::PREFLOP:
             Preflop();
             break;
@@ -571,22 +572,6 @@ void PokerGame::ProcessDecision(int playerIdx, Decision d) {
 }
 
 // Street Funcs
-
-void PokerGame::PreRound(int handNum) {
-    ClearScreen();
-    // print street name at top
-    cout << "Starting Hand " << handNum << endl;
-    street = NextStreet(street);
-    // ------
-    PrintBreakLine();
-    // print players stack size
-    PrintPlayersInfo(false);
-    // ------
-    PrintBreakLine();
-    // wait for user to continue
-    UserPauseClear();
-
-}
 
 void PokerGame::Preflop() {
     int sbPosition;

@@ -4,8 +4,6 @@
 
 string StreetToString(Street s) {
     switch(s) {
-        case Street::PREROUND:
-            return "PREROUND";
         case Street::PREFLOP:
             return "PREFLOP";
         case Street::FLOP:
@@ -23,8 +21,6 @@ string StreetToString(Street s) {
 
 Street NextStreet(Street s) {
     switch(s) {
-        case Street::PREROUND:
-            return Street::PREFLOP;
         case Street::PREFLOP:
             return Street::FLOP;
         case Street::FLOP:
@@ -186,19 +182,17 @@ void PrintBreakLine() {
 }
 
 void PrintBoardPot(vector<Card> currBoard, int currPot) {
-    if(!(currBoard.empty() && currPot == 0)) {
-        cout << "{ ";
-        for(size_t i = 0; i < 5; i++) {
-            if(i < currBoard.size() && !currBoard.empty()) {
-                currBoard[i].Print();
-                cout << " ";
-            }
-            else {
-                cout << "_ ";
-            }
+    cout << "{ ";
+    for(size_t i = 0; i < 5; i++) {
+        if(i < currBoard.size() && !currBoard.empty()) {
+            currBoard[i].Print();
+            cout << " ";
         }
-        cout << "} ";
+        else {
+            cout << "_ ";
+        }
+    }
+    cout << "} ";
     
-        cout << " [ " << currPot << " ]";
-    }   
+    cout << " [ " << currPot << " ]";
 }

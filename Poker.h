@@ -46,7 +46,6 @@ class PokerGame {
         void ProcessDecision(int playerIdx, Decision d);
 
         // Street Funcs
-        void PreRound(int handNum);
         void Preflop();
         void BettingStreet();
         void Showdown();

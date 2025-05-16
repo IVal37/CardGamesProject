@@ -78,6 +78,7 @@ Decision Player::GetUserDecision(vector<Action> possibleActions, int minBet, int
         ClearScreen();
         // { board }  [ pot ] 
         PrintBoardPot(currBoard, currPot);
+        cout << endl;
         // ------
         PrintBreakLine();
         // Name(hand)
