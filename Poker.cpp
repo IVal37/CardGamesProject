@@ -112,7 +112,8 @@ vector<Action> PokerGame::GetPossibleActions(Player p) {
         }
     }
 
-    exit(9);
+    assert(false && "GetPossibleActions: unhandled state");
+    return { Action::FOLD }; 
 }
 
 int PokerGame::NumPlayersIn() {
@@ -194,6 +195,18 @@ pair<int, HandStrength> PokerGame::DetermineWinningHand(vector<Card> board, int 
 }
 
 HandStrength PokerGame::GetBestHand(vector<Card> board, vector<Card> hand) {
+    if(board.empty()) {
+        int firstCardRank = hand[0].GetRank();
+        int secondCardRank = hand[1].GetRank();
+        
+        vector<int> rankRetVec = {firstCardRank, secondCardRank};
+
+        if(firstCardRank == secondCardRank) {
+            return HandStrength(HandType::PAIR, rankRetVec);
+        }
+        return HandStrength(HandType::HIGH_CARD, rankRetVec);
+    }
+
     // cards -> vec size 7 with hand + board cards
     vector<Card> cards;
     cards.reserve(board.size() + hand.size());
@@ -584,30 +597,43 @@ void PokerGame::BettingStreet() {
 void PokerGame::Showdown() {
     vector<int> winnerVec;
     HandStrength bestHandStrength;
-    bool firstLoop = true;
 
-    for(size_t i = 0; i  < players.size(); i++) {
-        if(!players[i].GetIsActive()) {
-            continue;
+    if(NumPlayersIn() == 1) {
+        for(size_t i = 0; i < players.size(); i++) {
+            if(players[i].GetIsActive()) {
+                winnerVec.push_back(i);
+                bestHandStrength = GetBestHand(board, players[i].GetHand());
+                break;
+            }
         }
-
-        HandStrength tempStrength = GetBestHand(board, players[i].GetHand());
-
-        if(firstLoop) {
-            bestHandStrength = tempStrength;
-            winnerVec = { (int)i };
-            firstLoop = false;
-        }
-        else if(bestHandStrength < tempStrength) {
-            bestHandStrength = tempStrength;
-            winnerVec = { (int)i };
-        }
-        else if(bestHandStrength == tempStrength) {
-            winnerVec.push_back((int)i);
-        }
-        //else
-            //leave winnerVec same
     }
+    else {
+        bool firstLoop = true;
+
+        for(size_t i = 0; i < players.size(); i++) {
+            if(!players[i].GetIsActive()) {
+                continue;
+            }
+
+            HandStrength tempStrength = GetBestHand(board, players[i].GetHand());
+
+            if(firstLoop) {
+                bestHandStrength = tempStrength;
+                winnerVec = { (int)i };
+                firstLoop = false;
+            }
+            else if(bestHandStrength < tempStrength) {
+                bestHandStrength = tempStrength;
+                winnerVec = { (int)i };
+            }
+            else if(bestHandStrength == tempStrength) {
+                winnerVec.push_back((int)i);
+            }
+            //else
+                //leave winnerVec same
+        }
+    }
+    
 
     if(winnerVec.size() == (int)1) {
         cout << "Winner is: " << players[winnerVec[0]].GetName() << endl;

@@ -138,7 +138,7 @@ Decision Player::GetUserDecision(vector<Action> possibleActions, int minBet, int
             decisionAmount = GetBetRaiseSize(minBet, incr) - currentBet;
             break;
         case(Action::RAISE):
-            decisionAmount = GetBetRaiseSize(currBet + lastBet, incr) - currentBet;
+            decisionAmount = GetBetRaiseSize(min(currBet + lastBet, stackSize), incr) - currentBet;
             break;
         default:
             exit(-1);
