@@ -25,10 +25,6 @@ bool Player::CanAct() {
     return isActive && !isAllIn;
 }
 
-void Player::AddToStack(int addOn) {
-    stackSize += addOn;
-}
-
 // Game Funcs
 void Player::DealHand(Deck& currDeck, int numCards) {
     for(int i = 0; i < numCards; i++) {
@@ -98,17 +94,24 @@ Decision Player::GetUserDecision(vector<Action> possibleActions, int minBet, int
         PrintBreakLine();
         // (x): Action
         for(int i = 0; i < 3; i++) {
-            cout << "(" << i + 1 << "): "
-                 << ActionToString(possibleActions[i]);
-                if(possibleActions[i] == Action::CALL) {
+            cout << "(" << i + 1 << "): " << ActionToString(possibleActions[i]);
+            // [size option]
+            switch(possibleActions[i]) {
+                case Action::CALL:
                     cout << " [" << currBet - currentBet << "]";
-                }
-                if(possibleActions[i] == Action::BET) {
+                    break;
+                case Action::BET:
                     cout << " [" << minBet << " - " << stackSize << "]";
-                }
-                if(possibleActions[i] == Action::RAISE) {
+                    break;
+                case Action::RAISE:
                     cout << " [" << min(currBet + lastBet, stackSize) << " - " << stackSize << "]";
-                }
+                    break;
+                case Action::ALL_IN:
+                    cout << " [" << stackSize << "]";
+                    break;
+                default:
+                    break;
+            }
             cout << endl;
         }
         // ------
@@ -124,17 +127,18 @@ Decision Player::GetUserDecision(vector<Action> possibleActions, int minBet, int
     int decisionAmount;
     switch(chosenAction) {
         case(Action::FOLD):
+            break;
         case(Action::CHECK):
             decisionAmount = 0;
             break;
         case(Action::CALL):
-            decisionAmount = currBet;
+            decisionAmount = currBet - currentBet;
             break;
         case(Action::BET):
-            decisionAmount = GetBetRaiseSize(minBet, incr);
+            decisionAmount = GetBetRaiseSize(minBet, incr) - currentBet;
             break;
         case(Action::RAISE):
-            decisionAmount = GetBetRaiseSize(currBet + lastBet, incr);
+            decisionAmount = GetBetRaiseSize(currBet + lastBet, incr) - currentBet;
             break;
         default:
             exit(-1);
@@ -143,23 +147,14 @@ Decision Player::GetUserDecision(vector<Action> possibleActions, int minBet, int
     return Decision(chosenAction, decisionAmount);
 }
 
-void Player::PerformAction(Decision userDecision) {
-    if(userDecision.action == Action::FOLD) {
-        SetIsActive(false);
-    }
-    else {
-        currentBet += userDecision.amount;
-        stackSize -= userDecision.amount;
-        if(stackSize == 0) {
-            isAllIn = true;
-        }
-    }
-}
-
 // Setters
 
 void Player::SetName(const string& in) {
     name = in;
+}
+
+void Player::SetPosition(Position p) {
+    position = p;
 }
 
 void Player::SetStackSize(int amount) {
@@ -174,6 +169,10 @@ void Player::SetIsActive(bool status) {
     isActive = status;
 }
 
+void Player::SetIsAllIn(bool status) {
+    isAllIn = status;
+}
+
 // Getters
 
 const string& Player::GetName() const {
@@ -182,6 +181,10 @@ const string& Player::GetName() const {
 
 vector<Card> Player::GetHand() const {
     return hand;
+}
+
+Position Player::GetPosition() const {
+    return position;
 }
 
 int Player::GetStackSize() const {
@@ -194,4 +197,8 @@ int Player::GetCurrentBet() const {
 
 bool Player::GetIsActive() const {
     return isActive;
+}
+
+bool Player::GetIsAllIn() const {
+    return isAllIn;
 }

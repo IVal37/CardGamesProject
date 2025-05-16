@@ -106,6 +106,20 @@ struct HandStrength {
   }
 };
 
+enum class Position {
+  SMALL_BLIND = 0,
+  BIG_BLIND = 1,
+  UTG = 2,
+  UTG_PLUS_ONE = 3,
+  MIDDLE_POSITION = 4,
+  LOJACK = 5,
+  HIJACK = 6,
+  CUTOFF = 7,
+  BUTTON = 8,
+};
+
+string PositionToString(Position p);
+
 // General util
 void ClearScreen();
 void UserPauseClear();

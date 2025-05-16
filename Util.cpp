@@ -96,6 +96,32 @@ string HandTypeToString(HandType h) {
     }
 }
 
+// Position enum funcs
+string PositionToString(Position p) {
+    switch(p) {
+      case Position::SMALL_BLIND:
+        return "SB";
+      case Position::BIG_BLIND:
+        return "BB";
+      case Position::UTG:
+        return "UTG";
+      case Position::UTG_PLUS_ONE:
+        return "+1";
+        case Position::MIDDLE_POSITION:
+        return "MP";
+      case Position::LOJACK:
+        return "LJ";
+        case Position::HIJACK:
+        return "HJ";
+      case Position::CUTOFF:
+        return "CO";
+      case Position::BUTTON:
+        return "BTN";
+      default:
+        exit(-9);
+    }
+  }
+
 // General Util Funcs
 
 void ClearScreen() {
@@ -148,5 +174,9 @@ void PrintBoardPot(vector<Card> currBoard, int currPot) {
     }
     cout << "} ";
 
-    cout << " [ " << currPot << " ]" << endl;
+    if(!(currBoard.empty() && currPot == 0)) {
+        cout << " [ " << currPot << " ]";
+    }
+
+    cout << endl;
 }

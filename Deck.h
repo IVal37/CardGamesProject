@@ -2,8 +2,10 @@
 #define DECK_H
 
 #include "Card.h"
+#include "Util.h"
 #include <vector>
 #include <random>
+#include <unordered_map>
 
 using namespace std;
 
@@ -14,16 +16,18 @@ class Deck {
     public:
         // Constructors
         Deck();
+        Deck(bool stacked);
 
         // Utility
         void Print();
 
         // Dealing
         Card PullCard();
+        Card PullRandomCard();
         vector<Card> DealHand(int numCards);
 
         // Shuffling
-        void RandomShuffle();
+        void CasinoWash();
         void RiffleShuffle();
         void Cut();
 
@@ -32,7 +36,6 @@ class Deck {
     
     private:
         vector<Card> deck;
-        int deckSize;
 };
 
 #endif

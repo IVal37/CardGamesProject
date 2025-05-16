@@ -41,7 +41,7 @@ class PokerGame {
         void RoundAction(Street s);
         void BettingRound();
         int NextPlayerToAct(int playerToAct);
-        void ProcessDecision(int playerIdx, Decision playerDecision);
+        void ProcessDecision(int playerIdx, Decision d);
 
         // Street Funcs
         void PreRound(int handNum);
@@ -53,8 +53,8 @@ class PokerGame {
         ~PokerGame() = default;
     private:
         // Game Vars
-        int numPlayers;
         vector<Player> players;
+        vector<Position> positions;
         int sb;
         int bb;
         int handsPlayed;
@@ -64,6 +64,7 @@ class PokerGame {
         Street street;
         vector<Card> board;
 
+        // Betting Vars
         int betToMatch;
         int prevBet;
         int pot;

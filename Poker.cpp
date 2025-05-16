@@ -1,11 +1,11 @@
 #include "Poker.h"
 
 PokerGame::PokerGame(int sb, int bb) : sb(sb), bb(bb), handsPlayed(0) {  
-    numPlayers = 6;
     string testNames[] = {"Izaak", "Ethan", "Andrew", "Adam", "Joon", "Jaxon"};
-    for(const auto& name : testNames) {
-        players.push_back(Player(name));
-    }
+    //numPlayers = 26;
+    //string testNames[] = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
+    //numPlayers = 2;
+    //string testNames[] = {"Izaak", "Michelle"};
     /*
     cout << "How many players?" << endl;
     int tempNum;
@@ -21,7 +21,27 @@ PokerGame::PokerGame(int sb, int bb) : sb(sb), bb(bb), handsPlayed(0) {
     }
     */
 
-   deck = Deck();
+    for(const auto& name : testNames) {
+        players.push_back(Player(name));
+    }
+
+    int numPlayers = (int)players.size();
+
+    positions.reserve(numPlayers);
+
+    positions.push_back(Position::SMALL_BLIND);
+    positions.push_back(Position::BIG_BLIND);
+    if(numPlayers >= 3) {positions.push_back(Position::UTG);}
+    if(numPlayers >= 9) {positions.push_back(Position::UTG_PLUS_ONE);}
+    if(numPlayers >= 6) {positions.push_back(Position::MIDDLE_POSITION);}
+    if(numPlayers >= 8) {positions.push_back(Position::LOJACK);}
+    if(numPlayers >= 7) {positions.push_back(Position::HIJACK);}
+    if(numPlayers >= 5) {positions.push_back(Position::CUTOFF);}
+    if(numPlayers >= 4) {positions.push_back(Position::BUTTON);}
+    
+    for(int i = 0; i < numPlayers; i++) {
+        players[i].SetPosition(positions[i]);
+    }
 }
 
 // Getters
@@ -45,9 +65,11 @@ void PokerGame::ResetRound() {
         p.ResetNextRound();
     }
 
-    pot = 0;
-    deck = Deck();
     board.clear();
+    pot = 0;
+
+    deck = Deck();
+    deck.CasinoWash();
 }
 
 void PokerGame::ResetStreet() {
@@ -61,11 +83,36 @@ void PokerGame::ResetStreet() {
 }
 
 vector<Action> PokerGame::GetPossibleActions(Player p) {
-    if(betToMatch == p.GetCurrentBet()) {
+    int haveIn = p.GetCurrentBet();
+    int stack = p.GetStackSize();
+    int toCall = betToMatch - haveIn;
+    int minBet = bb;
+    int minRaise = (betToMatch != 0) ? betToMatch - prevBet : betToMatch;
+
+    if(toCall >= stack) {
+        return {Action::FOLD, Action::ALL_IN};
+    }
+
+    if(toCall == 0 && stack <= minBet) {
+        return {Action::FOLD, Action::CHECK, Action::ALL_IN};
+    }
+
+    if(betToMatch == haveIn) {
         return {Action::FOLD, Action::CHECK, Action::BET};
     }
 
-    return {Action::FOLD, Action::CALL, Action::RAISE};
+    if(stack > toCall) {
+        int surplus = stack - toCall;
+
+        if(surplus >= minRaise) {
+            return {Action::FOLD, Action::CALL, Action::RAISE};
+        }
+        else {
+            return {Action::FOLD, Action::CALL, Action::ALL_IN};
+        }
+    }
+
+    exit(9);
 }
 
 int PokerGame::NumPlayersIn() {
@@ -79,17 +126,46 @@ int PokerGame::NumPlayersIn() {
 }
 
 void PokerGame::PrintPlayersInfo(bool handStackMode) {
-    for(int i = 0; i < numPlayers; i++) {
+    int longestName = -1;
+    for(const auto& player : players) {
+        if((int)player.GetName().length() > longestName) {
+            longestName = player.GetName().length();
+        }
+    }
+
+    int longestPosition = (int)players.size() <= 2 ? 2 : 3;
+    int longestLen = longestName;
+    if(handStackMode) {
+        longestLen += longestPosition;
+    } 
+
+    for(int i = 0; i < (int)players.size(); i++) {
         if(players[i].GetIsActive() || !handStackMode) {
-            cout << "Player " << i + 1 << ": " << players[i].GetName();
+            // name
+            cout << players[i].GetName();
+            // (position)
             if(handStackMode) {
-                cout << "(";
+                cout << "(" << PositionToString(players[i].GetPosition()) << ")";
+            }
+            // :
+            cout << ":";
+            // whitespace padding
+            int toPad = (int)players[i].GetName().length();
+            if(handStackMode) {
+                toPad += (int)PositionToString(players[i].GetPosition()).length();
+            }
+
+            for(int j = 0; j <= longestLen - toPad; j++) {
+                cout << " ";
+            }
+            // (hand)
+            if(handStackMode) {
+                cout << "{";
                 players[i].PrintHand();
-                cout << ")" << endl;
+                cout << "} ";
             }
-            else {
-                cout << "[" << players[i].GetStackSize() << "]" << endl;
-            }
+            
+            cout << "[" << players[i].GetStackSize() << "]" << endl;
         }
     }
 }
@@ -429,7 +505,7 @@ void PokerGame::BettingRound() {
 }
 
 int PokerGame::NextPlayerToAct(int currPlayerNum) {
-    if(currPlayerNum == numPlayers - 1) {
+    if(currPlayerNum == (int)players.size() - 1) {
         return 0;
     }
     else {
@@ -437,18 +513,40 @@ int PokerGame::NextPlayerToAct(int currPlayerNum) {
     }
 }
 
-void PokerGame::ProcessDecision(int playerIdx, Decision playerDecision) {
-    players[playerIdx].PerformAction(playerDecision);
-
-    if(playerDecision.amount > betToMatch) {
-        prevBet = (betToMatch != 0) ? betToMatch : playerDecision.amount;
-        betToMatch = playerDecision.amount;
+void PokerGame::ProcessDecision(int playerIdx, Decision d) {
+    Player &p = players[playerIdx];
+    
+    if(d.action != Action::FOLD && d.action != Action::CHECK) {
+        int modBet = d.amount;
+        p.SetCurrentBet(p.GetCurrentBet() + modBet);
+        p.SetStackSize(p.GetStackSize() - modBet);
+        pot += modBet;
     }
 
-    pot += playerDecision.amount;
+    switch(d.action) {
+        case Action::FOLD:
+            p.SetIsActive(false);
+            break;
+        case Action::CHECK:
+        case Action::CALL:
+            break;
+        case Action::BET:
+        case Action::RAISE:
+            prevBet = (betToMatch != 0) ? betToMatch : d.amount;
+            betToMatch = p.GetCurrentBet();
 
-    if(playerDecision.action == Action::BET || playerDecision.action == Action::RAISE) {
-        lastRaiserIdx = playerIdx;
+            lastRaiserIdx = playerIdx;
+            break;
+        case Action::ALL_IN:
+            if (p.GetCurrentBet() > betToMatch) {
+                prevBet = p.GetCurrentBet() - (betToMatch);
+                betToMatch    = p.GetCurrentBet();
+
+                lastRaiserIdx = playerIdx;
+            }
+
+            p.SetIsAllIn(true);
+            break;
     }
 }
 
@@ -517,7 +615,7 @@ void PokerGame::Showdown() {
     else {
         cout << "Winners are: " << endl;
         for(size_t i = 0; i < winnerVec.size(); i++) {
-            cout << "\t" << players[winnerVec[0]].GetName() << endl;
+            cout << "\t" << players[winnerVec[i]].GetName() << endl;
         }
     }
     cout << "Hand type: " << HandTypeToString(bestHandStrength.type) << endl;
@@ -526,11 +624,13 @@ void PokerGame::Showdown() {
     int chopPotLeftover = pot % (int)winnerVec.size();;
     for(size_t i = 0; i < winnerVec.size(); i++) {
         int toWin = chopPotToWin + ((int)i < chopPotLeftover ? 1 : 0);
-        players[winnerVec[(int)i]].AddToStack(toWin);
+        Player &p = players[winnerVec[(int)i]];
+        p.SetStackSize(p.GetStackSize() + toWin);
     }
 
     street = NextStreet(street);
 
     PrintBreakLine();
+    PrintPlayersInfo(false);
     UserPauseClear();
 }

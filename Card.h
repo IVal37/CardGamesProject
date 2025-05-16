@@ -14,6 +14,11 @@ class Card {
         // Utility
         void Print();
 
+        // Operator Overloading
+        bool operator==(Card other) {
+            return suit == other.suit && symbol == other.symbol;
+        }
+
         // Getters
         int GetRank() const;
         string GetSuit() const;

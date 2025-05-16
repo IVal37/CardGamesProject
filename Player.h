@@ -17,17 +17,16 @@ class Player {
         void ResetNextStreet();
         void ResetNextRound();
         bool CanAct();
-        void AddToStack(int addOn);
 
         // Game funcs
         void DealHand(Deck& currDeck, int numCards);
         void PrintHand();
         int GetBetRaiseSize(int minBet, int increment);
         Decision GetUserDecision(vector<Action> possibleActions, int minBet, int incr, int currBet, int lastBet, vector<Card> currBoard, int currPot);
-        void PerformAction(Decision userDecision);
 
         // Setters
         void SetName(const string& in);
+        void SetPosition(Position p);
         void SetStackSize(int amount);
         void SetCurrentBet(int bet);
         void SetIsActive(bool status);
@@ -36,6 +35,7 @@ class Player {
         // Getters
         const string& GetName() const;
         vector<Card> GetHand() const;
+        Position GetPosition() const;
         int GetStackSize() const;
         int GetCurrentBet() const;
         bool GetIsActive() const;
@@ -47,6 +47,7 @@ class Player {
     private:
         string name;
         vector<Card> hand;
+        Position position;
         int handSize;
         int stackSize;
         int currentBet;
