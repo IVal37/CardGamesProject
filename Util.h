@@ -119,6 +119,7 @@ enum class Position {
 };
 
 string PositionToString(Position p);
+Position NextPosition(Position p);
 
 // General util
 void ClearScreen();

@@ -34,6 +34,7 @@ class PokerGame {
         HandStrength GetBestHand(vector<Card> board, vector<Card> hand);
         void DealStreet(int cardsToDeal);
         int NumToDeal();
+        void ShiftPositions();
 
         // Game Funcs
         void StartGame();

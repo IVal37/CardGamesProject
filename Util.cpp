@@ -122,6 +122,30 @@ string PositionToString(Position p) {
     }
   }
 
+Position NextPosition(Position p) {
+    switch(p) {
+        case Position::SMALL_BLIND:
+          return Position::BIG_BLIND;
+        case Position::BIG_BLIND:
+          return Position::UTG;
+        case Position::UTG:
+          return Position::UTG_PLUS_ONE;
+        case Position::UTG_PLUS_ONE:
+          return Position::MIDDLE_POSITION;
+          case Position::MIDDLE_POSITION:
+          return Position::LOJACK;
+        case Position::LOJACK:
+          return Position::HIJACK;
+          case Position::HIJACK:
+          return Position::CUTOFF;
+        case Position::CUTOFF:
+          return Position::BUTTON;
+        case Position::BUTTON:
+          return Position::SMALL_BLIND;
+        default:
+          exit(-8);
+      }
+}
 // General Util Funcs
 
 void ClearScreen() {
@@ -162,21 +186,19 @@ void PrintBreakLine() {
 }
 
 void PrintBoardPot(vector<Card> currBoard, int currPot) {
-    cout << "{ ";
-    for(size_t i = 0; i < 5; i++) {
-        if(i < currBoard.size() && !currBoard.empty()) {
-            currBoard[i].Print();
-            cout << " ";
-        }
-        else {
-            cout << "_ ";
-        }
-    }
-    cout << "} ";
-
     if(!(currBoard.empty() && currPot == 0)) {
+        cout << "{ ";
+        for(size_t i = 0; i < 5; i++) {
+            if(i < currBoard.size() && !currBoard.empty()) {
+                currBoard[i].Print();
+                cout << " ";
+            }
+            else {
+                cout << "_ ";
+            }
+        }
+        cout << "} ";
+    
         cout << " [ " << currPot << " ]";
-    }
-
-    cout << endl;
+    }   
 }

@@ -418,6 +418,12 @@ int PokerGame::NumToDeal() {
     return 0;
 }
 
+void PokerGame::ShiftPositions() {
+    for(auto& player : players) {
+        player.SetPosition(NextPosition(player.GetPosition()));
+    }
+}
+
 // Game Funcs
 void PokerGame::StartGame() {
     while(1) {
@@ -458,6 +464,7 @@ void PokerGame::StartStreet() {
             cout << StreetToString(street) << "  ";
             // { board }  [ pot ]
             PrintBoardPot(board, pot);
+            cout << endl;
             // ------
             PrintBreakLine();
             // Player (x): (name)(hand)
@@ -582,15 +589,32 @@ void PokerGame::PreRound(int handNum) {
 }
 
 void PokerGame::Preflop() {
-    ProcessDecision(0, Decision(Action::BET, sb));
-    ProcessDecision(1, Decision(Action::RAISE, bb));
+    int sbPosition;
+    for(size_t i = 0; i < players.size(); i++) {
+        if(players[i].GetPosition() == Position::SMALL_BLIND) {
+            sbPosition = i;
+            break;
+        }
+    }
+
+    ProcessDecision(sbPosition, Decision(Action::BET, sb));
+    ProcessDecision(sbPosition + 1, Decision(Action::RAISE, bb));
     
-    lastRaiserIdx = 2;
+    lastRaiserIdx = sbPosition + 2;
+
     BettingRound();
 } 
 
 void PokerGame::BettingStreet() {
-    lastRaiserIdx = (street == Street::PREFLOP) ? 2 : 0;
+    int sbPosition;
+    for(size_t i = 0; i < players.size(); i++) {
+        if(players[i].GetPosition() == Position::SMALL_BLIND) {
+            sbPosition = i;
+            break;
+        }
+    }
+
+    lastRaiserIdx = (street == Street::PREFLOP) ? sbPosition + 2 : sbPosition;
     BettingRound();
 }
 
@@ -655,6 +679,7 @@ void PokerGame::Showdown() {
     }
 
     street = NextStreet(street);
+    ShiftPositions();
 
     PrintBreakLine();
     PrintPlayersInfo(false);
