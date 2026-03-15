@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import List
 
 from card import Card
+from enums import PlayerState
 
 @dataclass
 class Player:
@@ -9,6 +10,7 @@ class Player:
     _stack: int
     _cards: List[Card]
     _current_bet: int
+    _state: PlayerState
 
     @property
     def name(self):
@@ -40,3 +42,11 @@ class Player:
     @property.setter
     def current_bet(self, curr_bet):
         self._current_bet = curr_bet
+
+    @property
+    def state(self):
+        return self._state
+    
+    @property.setter
+    def state(self, state):
+        self._state = state

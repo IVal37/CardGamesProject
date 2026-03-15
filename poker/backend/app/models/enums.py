@@ -27,3 +27,16 @@ class Action(Enum):
     'Call'
     'Check'
     'Fold'
+
+class PlayerState(Enum):
+    'All-In'
+    'Folded'
+    'Active'
+    'Away'
+
+class Street(Enum):
+    'Pre-flop'
+    'Flop'
+    'Turn'
+    'River'
+    'Showdown'

@@ -51,6 +51,9 @@ class Deck:
 
     # Dealing Cards Funcs
 
+    def deal_card(self) -> Card:
+        return self.cards.pop()
+
     def deal_hand(self, num_cards: int) -> List[Card]:
         hand: List[Card] = list[Card]
         for _ in range(num_cards):
