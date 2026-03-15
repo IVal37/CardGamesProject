@@ -55,3 +55,5 @@ class RoomManager:
             pass
         else:
             pass
+
+room_manager = RoomManager()

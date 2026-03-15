@@ -5,8 +5,7 @@ from player import Player
 from card import Card, Deck
 from enums import Street
 
-MAX_PLAYER_COUNT: int = 9
-
+from ..core.config import MAX_PLAYER_COUNT 
 @dataclass
 class GameState:
     # Attributes
@@ -59,6 +58,9 @@ class GameState:
 
     # Util Funcs
     def AddPlayer(self, player: Player) -> None:
+        if len(self.players) >= MAX_PLAYER_COUNT:
+            return      #TODO throw error
+
         proposed_name = player.name
 
         #TODO no unusable names
