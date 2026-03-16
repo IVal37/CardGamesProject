@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from typing import List
 
-from card import Card
-from enums import PlayerState
+from .card import Card
+from .enums import PlayerState
 
 @dataclass
 class Player:
@@ -16,7 +16,7 @@ class Player:
     def name(self):
         return self._name
     
-    @property.setter
+    @name.setter
     def name(self, name):
         self._name = name
 
@@ -24,6 +24,7 @@ class Player:
     def stack(self):
         return self._stack
     
+    @stack.setter
     def stack(self, stack):
         self._stack = stack
 
@@ -31,7 +32,7 @@ class Player:
     def cards(self):
         return self._cards
     
-    @property.setter
+    @cards.setter
     def cards(self, cards):
         self._cards = cards
 
@@ -39,7 +40,7 @@ class Player:
     def current_bet(self):
         return self._current_bet
     
-    @property.setter
+    @current_bet.setter
     def current_bet(self, curr_bet):
         self._current_bet = curr_bet
 
@@ -47,6 +48,6 @@ class Player:
     def state(self):
         return self._state
     
-    @property.setter
+    @state.setter
     def state(self, state):
         self._state = state

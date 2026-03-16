@@ -1,42 +1,42 @@
-from enum import Enum
+from enum import Enum, auto
 
 class Rank(Enum):
-    'A' = 1
-    '2' = 2
-    '3' = 3
-    '4' = 4
-    '5' = 5
-    '6' = 6
-    '7' = 7
-    '8' = 8
-    '9' = 9
-    'T' = 10
-    'J' = 11
-    'Q' = 12
-    'K' = 13
+    ACE = auto()
+    TWO = auto()
+    THREE = auto()
+    FOUR = auto()
+    FIVE = auto()
+    SIX = auto()
+    SEVEN = auto()
+    EIGHT = auto()
+    NINE = auto()
+    TEN = auto()
+    JACK = auto()
+    QUEEN = auto()
+    KING = auto()
 
 class Suit(Enum):
-    's'
-    'c'
-    'h'
-    'd'
+    SPADES = auto()
+    CLUBS = auto()
+    HEARTS = auto()
+    DIAMONDS = auto()
 
 class Action(Enum):
-    'All-In'
-    'Raise'
-    'Call'
-    'Check'
-    'Fold'
+    ALL_IN = auto()
+    RAISE = auto()
+    CALL = auto()
+    CHECK = auto()
+    FOLD = auto()
 
 class PlayerState(Enum):
-    'All-In'
-    'Folded'
-    'Active'
-    'Away'
+    ALL_IN = auto()
+    FOLDED = auto()
+    ACTIVE = auto()
+    AWAY = auto()
 
 class Street(Enum):
-    'Pre-flop'
-    'Flop'
-    'Turn'
-    'River'
-    'Showdown'
+    PRE_FLOP = auto()
+    FLOP = auto()
+    TURN = auto()
+    RIVER = auto()
+    SHOWDOWN = auto()

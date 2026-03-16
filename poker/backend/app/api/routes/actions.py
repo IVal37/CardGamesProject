@@ -1,11 +1,17 @@
 from fastapi import APIRouter
 
+from ....app.services.room_manager import room_manager
+
 router = APIRouter()
 
-@router.post("/tables")
-def create_table():
-    return {"message": "table created"}
+@router.post("/tables/{room_id}/join")
+def join_table(room_id: str):
+    return {"message": f"joined table {room_id}"}
 
-@router.get("/tables/{room_id}")
-def get_table(room_id: str):
-    return {"room_id": room_id}
+@router.post("/tables/{room_id}/leave")
+def leave_table():
+    return {"message": "left table"}
+
+@router.post("/tables/{room_id}/actions")
+def apply_action(room_id: str): #TODO action schema passed as arg
+    return {"message": "applied action"}

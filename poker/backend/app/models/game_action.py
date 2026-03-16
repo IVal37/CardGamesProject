@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from enums import Action
+from .enums import Action
 
 @dataclass
 class GameAction:
