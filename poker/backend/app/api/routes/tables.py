@@ -16,8 +16,10 @@ def create_table():
 
 @router.get("/tables/{room_id}")
 def get_state(room_id: str):
-    state: GameState = room_manager.get_room(room_id)
-
+    state: GameState = room_manager.get_room(int(room_id))
+    if state is None:
+        return 'room does not exist'
+    # else
     player_schemas: List[PlayerSchema] = list()
     for player in state.players:
         # Create nested card schemas for player schema
@@ -48,10 +50,9 @@ def get_state(room_id: str):
 
     return GameStateSchema(
         players=player_schemas,
-        active_players=state.active_player_count,
+        player_count=state.num_players,
         board=board_cards_schemas,
         street=state.street.name,
         pot=state.pot,
         bet_to_match = state.current_bet_to_match,
     )
-

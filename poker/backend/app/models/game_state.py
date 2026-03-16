@@ -11,7 +11,7 @@ from ..core.config import MAX_PLAYER_COUNT
 class GameState:
     # Attributes
     _players: List[Player]
-    _active_player_count: int
+    _num_players: int
     _deck: Deck
     _board: List[Card]
     _street: Street
@@ -28,12 +28,12 @@ class GameState:
         self._players = list
 
     @property
-    def active_player_count(self):
-        return self._active_player_count
+    def num_players(self):
+        return self._num_players
     
-    @active_player_count.setter
-    def active_player_count(self, count):
-        self._active_player_count = count
+    @num_players.setter
+    def num_players(self, num):
+        self._num_players = num
 
     @property
     def deck(self):
@@ -78,6 +78,7 @@ class GameState:
     # Constructor
     def __init__(self):
         self.players = list()
+        self.num_players = 0
         self.active_player_count = 0
         self.deck = Deck()
         self.board = list()
@@ -87,7 +88,7 @@ class GameState:
 
     # Player Funcs
     def AddPlayer(self, player: Player) -> None:
-        if len(self.players) >= MAX_PLAYER_COUNT:
+        if self.num_players >= MAX_PLAYER_COUNT:
             return      #TODO throw error
 
         proposed_name = player.name
@@ -99,12 +100,12 @@ class GameState:
                 return    #TODO throw error
 
         self.players.append(player)
-        self.active_player_count += 1
+        self.num_players += 1
     
     def RemovePlayer(self, name: str) -> None:
         # assuming it can only be called if name exists since only called by person removing themselves
         self.players.remove(name)
-        self.active_player_count -= 1
+        self.num_players -= 1
 
     # Round Funcs
     def ResetDeck(self) -> None:

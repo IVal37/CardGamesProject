@@ -1,5 +1,5 @@
 from pydantic import BaseModel
 
-def CardSchema(BaseModel):
+class CardSchema(BaseModel):
     rank: str
     suit: str

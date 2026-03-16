@@ -1,10 +1,11 @@
 from pydantic import BaseModel
+from typing import List
 
 from .card import CardSchema
 
-def PlayerSchema(BaseModel):
+class PlayerSchema(BaseModel):
     name: str
     stack: int
-    cards: list[CardSchema]
+    cards: List[CardSchema]
     current_bet: int
     state: str

@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Dict
+from typing import Dict, Optional
 
 from ..models.game_state import GameState
 from ..models.game_action import GameAction
@@ -41,8 +41,8 @@ class RoomManager:
 
         return str(room_id)
 
-    def get_room(self, room_id: int) -> GameState:
-        return self.room_dict[room_id]
+    def get_room(self, room_id: int) -> Optional[GameState]:
+        return self.room_dict.get(room_id)
 
     def delete_room(self, room_id: int) -> None:
         self.room_dict.pop(room_id)

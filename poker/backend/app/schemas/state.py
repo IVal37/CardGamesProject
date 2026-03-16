@@ -1,12 +1,13 @@
 from pydantic import BaseModel
+from typing import List
 
 from .player import PlayerSchema
 from .card import CardSchema
 
-def GameStateSchema(BaseModel):
-    players: list[PlayerSchema]
-    active_player_count: int
-    board: list[CardSchema]
+class GameStateSchema(BaseModel):
+    players: List[PlayerSchema]
+    player_count: int
+    board: List[CardSchema]
     street: str
     pot: int
     bet_to_match: int
