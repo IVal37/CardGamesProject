@@ -3,9 +3,13 @@ from typing import List
 
 from .card import CardSchema
 
-class PlayerSchema(BaseModel):
+class PlayerGetSchema(BaseModel):
     name: str
     stack: int
     cards: List[CardSchema]
     current_bet: int
     state: str
+
+class PlayerPostSchema(BaseModel):
+    name: str
+    stack: int

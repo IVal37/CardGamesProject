@@ -47,9 +47,6 @@ class RoomManager:
     def delete_room(self, room_id: int) -> None:
         self.room_dict.pop(room_id)
     
-    def add_player(self, room_id: int, player: Player):
-        pass
-
     # Action Funcs
     def apply_action(self, room_id: int, game_action: GameAction) -> None:
         action = game_action.action

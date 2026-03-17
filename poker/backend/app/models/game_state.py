@@ -12,9 +12,10 @@ class GameState:
     # Attributes
     _players: List[Player]
     _num_players: int
+    _currently_dealing: bool
     _deck: Deck
-    _board: List[Card]
     _street: Street
+    _board: List[Card]
     _pot: int
     _current_bet_to_match: int
     
@@ -36,6 +37,14 @@ class GameState:
         self._num_players = num
 
     @property
+    def currently_dealing(self):
+        return self._currently_dealing
+    
+    @currently_dealing.setter
+    def currently_dealing(self, is_dealing):
+        self._currently_dealing = is_dealing
+
+    @property
     def deck(self):
         return self._deck
     
@@ -44,20 +53,20 @@ class GameState:
         self._deck = deck
 
     @property
-    def board(self):
-        return self._board
-    
-    @board.setter
-    def board(self, board):
-        self._board = board
-
-    @property
     def street(self):
         return self._street
     
     @street.setter
     def street(self, street):
         self._street = street
+
+    @property
+    def board(self):
+        return self._board
+    
+    @board.setter
+    def board(self, board):
+        self._board = board
 
     @property
     def pot(self):
@@ -80,6 +89,7 @@ class GameState:
         self.players = list()
         self.num_players = 0
         self.active_player_count = 0
+        self.currently_dealing = False
         self.deck = Deck()
         self.board = list()
         self.street = Street.PRE_FLOP
@@ -87,7 +97,7 @@ class GameState:
         self.current_bet_to_match = 0
 
     # Player Funcs
-    def AddPlayer(self, player: Player) -> None:
+    def add_player(self, player: Player) -> None:
         if self.num_players >= MAX_PLAYER_COUNT:
             return      #TODO throw error
 
@@ -102,12 +112,15 @@ class GameState:
         self.players.append(player)
         self.num_players += 1
     
-    def RemovePlayer(self, name: str) -> None:
-        # assuming it can only be called if name exists since only called by person removing themselves
-        self.players.remove(name)
-        self.num_players -= 1
+    def remove_player(self, name: str) -> bool:
+        for index, player in enumerate(self.players):
+            if player.name == name:
+                self.players.pop(index)
+                self.num_players -= 1
+                return True
+        return False
 
     # Round Funcs
-    def ResetDeck(self) -> None:
+    def reset_deck(self) -> None:
         self.deck = Deck()
         self.deck.shuffle()

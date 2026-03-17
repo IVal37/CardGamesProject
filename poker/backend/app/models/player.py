@@ -51,3 +51,10 @@ class Player:
     @state.setter
     def state(self, state):
         self._state = state
+
+    def __init__(self, name: str, stack: int):
+        self.name = name
+        self.stack = stack
+        self.cards = []
+        self.current_bet = 0
+        self.state = PlayerState.ACTIVE
