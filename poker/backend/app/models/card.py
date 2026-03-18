@@ -67,7 +67,7 @@ class Deck:
         return self.cards.pop()
 
     def deal_hand(self, num_cards: int) -> List[Card]:
-        hand: List[Card] = list[Card]
+        hand: List[Card] = list()
         for _ in range(num_cards):
             hand.append(self.cards.pop())
 
@@ -76,7 +76,7 @@ class Deck:
     def deal_street(self, num_cards: int) -> List[Card]:
         self.cards.pop()    # burn card
 
-        street_cards: List[Card] = list[Card]
+        street_cards: List[Card] = list()
         for _ in range(num_cards):
             street_cards.append(self.cards.pop())
 

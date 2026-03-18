@@ -18,8 +18,8 @@ def create_table():
 def get_state(table_id: str):
     state: GameState = room_manager.get_room(int(table_id))
     if state is None:
-        return 'room does not exist'
-    # else
+        return {"message": f"table {table_id} does not exist"}
+    # else'
     player_schemas: List[PlayerGetSchema] = list()
     for player in state.players:
         # Create nested card schemas for player schema
@@ -56,3 +56,11 @@ def get_state(table_id: str):
         pot=state.pot,
         bet_to_match = state.current_bet_to_match,
     )
+
+@router.post("/tables/{table_id}/delete")
+def delete_table(table_id: str):
+    deleted = room_manager.delete_room(int(table_id))
+    if not deleted:
+        return {"message": f"table {table_id} does not exist"}
+
+    return {"message": f"deleted table {table_id}"}

@@ -1,0 +1,1 @@
+1. methods called by routes return HTTP codes

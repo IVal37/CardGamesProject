@@ -44,8 +44,11 @@ class RoomManager:
     def get_room(self, room_id: int) -> Optional[GameState]:
         return self.room_dict.get(room_id)
 
-    def delete_room(self, room_id: int) -> None:
+    def delete_room(self, room_id: int) -> bool:
+        if room_id not in self.room_dict:
+            return False
         self.room_dict.pop(room_id)
+        return True
     
     # Action Funcs
     def apply_action(self, room_id: int, game_action: GameAction) -> None:

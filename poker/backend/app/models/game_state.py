@@ -124,3 +124,20 @@ class GameState:
     def reset_deck(self) -> None:
         self.deck = Deck()
         self.deck.shuffle()
+
+    # Actions
+    def make_bet(self, player_name: str, amount: int) -> None:
+        for index, player in enumerate(self.players):
+            if player.name == player_name:
+                self.players[index].make_bet(amount)
+                if amount > self.current_bet_to_match:
+                    self.current_bet_to_match = amount
+                return
+        
+    def make_bet(self, player_index: int, amount: int) -> None:
+        if player_index < self.num_players:
+            amount_bet: int = self.players[player_index].make_bet(amount)
+            if amount_bet > self.current_bet_to_match:
+                self.current_bet_to_match = amount_bet
+            return
+        

@@ -6,12 +6,14 @@ from .enums import PlayerState
 
 @dataclass
 class Player:
+    # Attributes
     _name: str
     _stack: int
     _cards: List[Card]
     _current_bet: int
     _state: PlayerState
 
+    # Getters and Setters
     @property
     def name(self):
         return self._name
@@ -52,9 +54,19 @@ class Player:
     def state(self, state):
         self._state = state
 
+    # Constructors
     def __init__(self, name: str, stack: int):
         self.name = name
         self.stack = stack
         self.cards = []
         self.current_bet = 0
         self.state = PlayerState.ACTIVE
+
+    def make_bet(self, bet: int) -> int:
+        if self.stack <= bet:
+            bet = self.stack
+            self.state = PlayerState.ALL_IN
+        self.current_bet = bet
+        self.stack -= bet
+
+        return bet
