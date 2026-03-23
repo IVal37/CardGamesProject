@@ -3,9 +3,9 @@ from typing import List, Dict
 
 from .player import Player
 from .card import Card, Deck
-from .enums import Street
+from ..core.enums import Street, PlayerState
 
-from ..core.config import MAX_PLAYER_COUNT 
+from ..core.config import MIN_PLAYER_COUNT, MAX_PLAYER_COUNT 
 
 @dataclass
 class GameState:
@@ -17,7 +17,9 @@ class GameState:
     _street: Street
     _board: List[Card]
     _pot: int
+    _previous_bet_to_match: int
     _current_bet_to_match: int
+    _current_player_index: int
     
     # Getters and Setters
     @property
@@ -43,6 +45,14 @@ class GameState:
     @currently_dealing.setter
     def currently_dealing(self, is_dealing):
         self._currently_dealing = is_dealing
+
+    @property
+    def current_player_index(self):
+        return self._current_player_index
+    
+    @current_player_index.setter
+    def current_player_index(self, idx):
+        self._current_player_index = idx
 
     @property
     def deck(self):
@@ -75,6 +85,14 @@ class GameState:
     @pot.setter
     def pot(self, pot):
         self._pot = pot
+
+    @property
+    def previous_bet_to_match(self):
+        return self._previous_bet_to_match
+    
+    @previous_bet_to_match.setter
+    def previous_bet_to_match(self, bet):
+        self._previous_bet_to_match = bet
     
     @property
     def current_bet_to_match(self):
@@ -94,19 +112,19 @@ class GameState:
         self.board = list()
         self.street = Street.PRE_FLOP
         self.pot = 0
+        self.previous_bet_to_match = 0
         self.current_bet_to_match = 0
+        self.current_player_index = 2
 
     # Player Funcs
     def add_player(self, player: Player) -> None:
         if self.num_players >= MAX_PLAYER_COUNT:
             return      #TODO throw error
 
-        proposed_name = player.name
-
         #TODO no unusable names
 
         for iter_player in self.players:
-            if proposed_name == iter_player.name:
+            if player.name == iter_player.name:
                 return    #TODO throw error
 
         self.players.append(player)
@@ -114,10 +132,20 @@ class GameState:
     
     def remove_player(self, name: str) -> bool:
         for index, player in enumerate(self.players):
+            # find player to remove
             if player.name == name:
-                self.players.pop(index)
+                # active player count logic
+                if self.players[index].state == PlayerState.ACTIVE:
+                    self.active_player_count -= 1
+                    # pause game if not enough players to continue
+                    if self.active_player_count < MIN_PLAYER_COUNT:
+                        self.toggle_pause()
+                
                 self.num_players -= 1
+                self.players.pop(index)
+
                 return True
+        # failed to find player to remove
         return False
 
     # Round Funcs
@@ -125,19 +153,22 @@ class GameState:
         self.deck = Deck()
         self.deck.shuffle()
 
-    # Actions
-    def make_bet(self, player_name: str, amount: int) -> None:
-        for index, player in enumerate(self.players):
-            if player.name == player_name:
-                self.players[index].make_bet(amount)
-                if amount > self.current_bet_to_match:
-                    self.current_bet_to_match = amount
-                return
-        
-    def make_bet(self, player_index: int, amount: int) -> None:
-        if player_index < self.num_players:
-            amount_bet: int = self.players[player_index].make_bet(amount)
-            if amount_bet > self.current_bet_to_match:
-                self.current_bet_to_match = amount_bet
-            return
-        
+    # Util funcs
+    def toggle_pause(self) -> None:
+        self.currently_dealing = not self.currently_dealing
+
+    def next_street(self) -> None:
+        order = [
+            Street.PRE_FLOP,
+            Street.FLOP,
+            Street.TURN,
+            Street.RIVER,
+            Street.SHOWDOWN,
+        ]
+        self.street = order[(order.index(self.street) + 1) % len(order)]
+
+    def increment_player_index(self) -> None:
+        if self.current_player_index == (self.num_players - 1):
+                    self.current_player_index = 0
+        else:
+            self.current_player_index += 1

@@ -50,21 +50,4 @@ class RoomManager:
         self.room_dict.pop(room_id)
         return True
     
-    # Action Funcs
-    def apply_action(self, room_id: int, game_action: GameAction) -> None:
-        action = game_action.action
-        
-        if action == 'All-In':
-            pass
-        elif action == 'Raise':
-            pass
-        elif action == 'Call':
-            pass
-        elif action == 'Check':
-            pass
-        elif action == 'Fold':
-            pass
-        else:
-            pass
-
 room_manager = RoomManager()

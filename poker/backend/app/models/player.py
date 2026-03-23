@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import List
 
 from .card import Card
-from .enums import PlayerState
+from ..core.enums import PlayerState
 
 @dataclass
 class Player:
@@ -12,6 +12,7 @@ class Player:
     _cards: List[Card]
     _current_bet: int
     _state: PlayerState
+    _has_acted: bool
 
     # Getters and Setters
     @property
@@ -54,6 +55,14 @@ class Player:
     def state(self, state):
         self._state = state
 
+    @property
+    def has_acted(self):
+        return self._has_acted
+    
+    @has_acted.setter
+    def has_acted(self, has_acted):
+        self._has_acted = has_acted
+
     # Constructors
     def __init__(self, name: str, stack: int):
         self.name = name
@@ -61,12 +70,4 @@ class Player:
         self.cards = []
         self.current_bet = 0
         self.state = PlayerState.ACTIVE
-
-    def make_bet(self, bet: int) -> int:
-        if self.stack <= bet:
-            bet = self.stack
-            self.state = PlayerState.ALL_IN
-        self.current_bet = bet
-        self.stack -= bet
-
-        return bet
+        self.has_acted = False

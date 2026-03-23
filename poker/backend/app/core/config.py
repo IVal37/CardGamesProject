@@ -1,1 +1,2 @@
+MIN_PLAYER_COUNT: int = 2
 MAX_PLAYER_COUNT: int = 9

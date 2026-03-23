@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import List
 import random
 
-from .enums import Rank, Suit
+from ..core.enums import Rank, Suit
 
 @dataclass
 class Card:
@@ -42,7 +42,7 @@ class Deck:
         self._cards = cards
 
     def __init__(self):
-        self.cards = list()
+        self.cards = []
         for suit in Suit:
             for rank in Rank:
                 self.cards.append(Card(rank, suit))
@@ -65,19 +65,4 @@ class Deck:
 
     def deal_card(self) -> Card:
         return self.cards.pop()
-
-    def deal_hand(self, num_cards: int) -> List[Card]:
-        hand: List[Card] = list()
-        for _ in range(num_cards):
-            hand.append(self.cards.pop())
-
-        return hand
-
-    def deal_street(self, num_cards: int) -> List[Card]:
-        self.cards.pop()    # burn card
-
-        street_cards: List[Card] = list()
-        for _ in range(num_cards):
-            street_cards.append(self.cards.pop())
-
-        return street_cards
+    
