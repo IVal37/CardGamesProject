@@ -67,12 +67,12 @@ def make_action(state: GameState, player_index: int, game_action: GameAction) ->
     #TODO add validation to bet and action
 
     if action == Action.FOLD:
-        player.state = PlayerState.FOLDED
         state.active_player_count -= 1
-
         state.pot += player.current_bet
-        player.current_bet = 0
 
+        player.state = PlayerState.FOLDED
+        player.current_bet = 0
+        player.has_acted = True
         player.cards.clear()
     elif action == Action.CHECK:
         player.has_acted = True
